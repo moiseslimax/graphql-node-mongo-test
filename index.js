@@ -84,14 +84,13 @@ app.use(
       },
 
       createUser: args => {
-          return User.findOne({ email: args.userInput.email })
-            .then(user => {
-              if(user) {
-                throw new Error('User exist already.');
-              }
-              return bcrypt
-              .hash(args.userInput.password, 12)
-            })        
+        return User.findOne({ email: args.userInput.email })
+          .then(user => {
+            if (user) {
+              throw new Error("User exist already.");
+            }
+            return bcrypt.hash(args.userInput.password, 12)
+          })
           .then(newPass => {
             const user = new User({
               email: args.userInput.email,
@@ -103,7 +102,7 @@ app.use(
             return { ...result._doc, password: null };
           })
           .catch(err => {
-            console.log(err);
+            throw err;
           });
       }
     },
@@ -113,11 +112,7 @@ app.use(
 
 mongoose
   .connect(
-    `mongodb+srv://adminx:${
-      process.env.MONGO_PASSWORD
-    }@cluster0-o2mga.mongodb.net/${
-      process.env.MONGO_DB
-    }?retryWrites=true&w=majority`,
+    `mongodb+srv://adminx:${process.env.MONGO_PASSWORD}@cluster0-o2mga.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`,
     { useNewUrlParser: true }
   )
   .then(() => {
